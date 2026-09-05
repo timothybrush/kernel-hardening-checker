@@ -525,6 +525,26 @@ Thanks to the [contributors][26] and users of this project!
 To answer this question, you can use the `kernel-hardening-checker` [sources of recommendations][24]
 and the [Linux Kernel Defence Map][4] with its references.
 
+### What about performance impact of these security hardening features?
+
+That is not an easy question, since performance impact depends on the system workload.
+A detailed evaluation of the performance impact of Linux security hardening features is
+in TODO (the issue [#66][21]). There are some interesting works in this area:
+  - Ike Devolder [@BlackIkeEagle][7] made some performance tests and described the results in [this article][8].
+  - Fabian Rauscher, Benedict Herzog, Timo Hönig, and Daniel Gruss published an article
+    ["Systematic Analysis of Kernel Security Performance and Energy Costs"][28] that describes
+    energy and run-time overhead of the hardware vulnerability mitigations (CONFIG_CPU_MITIGATIONS).
+
+### Can I easily check which kernel versions support some Kconfig option?
+
+Yes. See the [LKDDb][18] project (Linux Kernel Driver Database) by Giacomo Catenazzi [@cateee][19].
+You can use it for the `mainline` or `stable` tree from [kernel.org][20] or for your custom kernel sources.
+
+### Does my kernel have all those mitigations of Transient Execution Vulnerabilities in my hardware?
+
+Checking the kernel config is not enough to answer this question.
+I highly recommend using [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
+
 ### How disabling `CONFIG_USER_NS` cuts the attack surface? It's needed for containers!
 
 Yes, the `CONFIG_USER_NS` option provides some isolation between the userspace programs,
@@ -538,7 +558,7 @@ The rationale:
 
   - A good overview of the trade-off between having user namespaces enabled, disabled and available only for root: https://github.com/NixOS/nixpkgs/pull/84522#issuecomment-614640601
 
-### KSPP and CLIP OS recommend `CONFIG_PANIC_ON_OOPS=y`. Why doesn't this tool do the same?
+### KSPP and CLIP OS recommend `CONFIG_PANIC_ON_OOPS=y`. Why doesn't `kernel-hardening-checker` do the same?
 
 I can't support this recommendation because:
   - It decreases system robustness (kernel oops is still not a rare situation even on production systems)
@@ -559,26 +579,6 @@ Linux kernel usermode helpers can be used for privilege escalation in kernel exp
 ([example 1][9], [example 2][10]). `CONFIG_STATIC_USERMODEHELPER` prevents that method. But it
 requires the corresponding support in the userspace: see the [example implementation][11] by
 Tycho Andersen [@tych0][12].
-
-### What about performance impact of these security hardening features?
-
-That is not an easy question, since performance impact depends on the system workload.
-A detailed evaluation of the performance impact of Linux security hardening features is
-in TODO (the issue [#66][21]). There are some interesting works in this area:
-  - Ike Devolder [@BlackIkeEagle][7] made some performance tests and described the results in [this article][8].
-  - Fabian Rauscher, Benedict Herzog, Timo Hönig, and Daniel Gruss published an article
-    ["Systematic Analysis of Kernel Security Performance and Energy Costs"][28] that describes
-    energy and run-time overhead of the hardware vulnerability mitigations (CONFIG_CPU_MITIGATIONS).
-
-### Does my kernel have all those mitigations of Transient Execution Vulnerabilities in my hardware?
-
-Checking the kernel config is not enough to answer this question.
-I highly recommend using [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
-
-### Can I easily check which kernel versions support some Kconfig option?
-
-Yes. See the [LKDDb][18] project (Linux Kernel Driver Database) by Giacomo Catenazzi [@cateee][19].
-You can use it for the `mainline` or `stable` tree from [kernel.org][20] or for your custom kernel sources.
 
 ### Why the `CONFIG_GCC_PLUGINS` option is automatically disabled during the kernel compilation?
 
