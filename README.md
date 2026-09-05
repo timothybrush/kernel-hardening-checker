@@ -520,17 +520,17 @@ Thanks to the [contributors][26] and users of this project!
 
 ## Questions and answers
 
-### ❓ How all these kernel parameters influence the Linux kernel security?
+### ❓ How do all these kernel parameters influence the Linux kernel security?
 
 To answer this question, you can use the `kernel-hardening-checker` [sources of recommendations][24]
 and the [Linux Kernel Defence Map][4] with its references.
 
-### ❓ What about performance impact of these security hardening features?
+### ❓ What about the performance impact of these security hardening features?
 
-That is not an easy question, since performance impact depends on the system workload.
+That is not an easy question, since the performance impact depends on the system workload.
 A detailed evaluation of the performance impact of Linux security hardening features is
 in TODO (the issue [#66][21]). There are some interesting works in this area:
-  - Ike Devolder [@BlackIkeEagle][7] made some performance tests and described the results in [this article][8].
+  - Ike Devolder [@BlackIkeEagle][7] conducted some performance tests and described the results in [this article][8].
   - Fabian Rauscher, Benedict Herzog, Timo Hönig, and Daniel Gruss published an article
     ["Systematic Analysis of Kernel Security Performance and Energy Costs"][28] that describes
     energy and run-time overhead of the hardware vulnerability mitigations (CONFIG_CPU_MITIGATIONS).
@@ -543,7 +543,7 @@ You can use it for the `mainline` or `stable` tree from [kernel.org][20] or for 
 ### ❓ Does my kernel have all those mitigations of Transient Execution Vulnerabilities in my hardware?
 
 Checking the kernel config is not enough to answer this question.
-I highly recommend using [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
+I highly recommend using the [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
 
 ### ❓ How can I disable loading of vulnerable Linux kernel modules?
 
@@ -584,7 +584,7 @@ However, it's not easy to do that without breaking the needed functionality 😉
   4. Write an empty value to the `kernel.modprobe` sysctl parameter. This is the weakest option, which only disables kernel module autoloading.
      Moreover, writing the original value `/usr/bin/modprobe` back to this sysctl parameter re-enables this dangerous feature.
 
-### ❓ How disabling `CONFIG_USER_NS` cuts the attack surface? It's needed for containers!
+### ❓ How does disabling `CONFIG_USER_NS` cut the attack surface? It's needed for containers!
 
 Yes, the `CONFIG_USER_NS` option provides some isolation between the userspace programs,
 but the tool recommends disabling it to cut the attack surface __of the kernel__.
@@ -593,25 +593,25 @@ The rationale:
 
   - An LWN article about the corresponding LKML discussion: https://lwn.net/Articles/673597/
 
-  - A twitter thread about `CONFIG_USER_NS` and security: https://twitter.com/robertswiecki/status/1095447678949953541
+  - A Twitter thread about `CONFIG_USER_NS` and security: https://twitter.com/robertswiecki/status/1095447678949953541
 
   - A good overview of the trade-off between having user namespaces enabled, disabled and available only for root: https://github.com/NixOS/nixpkgs/pull/84522#issuecomment-614640601
 
 ### ❓ KSPP and CLIP OS recommend `CONFIG_PANIC_ON_OOPS=y`. Why doesn't `kernel-hardening-checker` do the same?
 
 I can't support this recommendation because:
-  - It decreases system robustness (kernel oops is still not a rare situation even on production systems)
-  - It allows easier denial-of-service attacks for the whole system
+  - It decreases system robustness (a kernel oops is still not a rare situation even on production systems)
+  - It allows easier denial-of-service attacks on the whole system
 
 You should enable `CONFIG_PANIC_ON_OOPS` if:
   - Your kernel doesn't encounter oopses during a typical workload
-  - Occasional system reboot is not a problem in your use case
+  - An occasional system reboot is not a problem in your use case
 
 I see a good compromise, which `kernel-hardening-checker` recommends:
   - Enable the `CONFIG_BUG` kconfig option. If a kernel oops happens in the process context, the offending/attacking process is killed. In other cases, the kernel panics, which is similar to `CONFIG_PANIC_ON_OOPS=y`.
-  - Set the sysctl options `kernel.oops_limit` and `kernel.warn_limit` to `100`, for example. On the one hand, this value doesn't allow easy DoS. On the other hand, it is not too large to miss the vulnerability exploitation attempts generating a lot of kernel warnings or oopses.
+  - Set the sysctl options `kernel.oops_limit` and `kernel.warn_limit` to `100`, for example. On the one hand, this value doesn't allow easy DoS. On the other hand, it is not too large to catch the vulnerability exploitation attempts generating a lot of kernel warnings or oopses.
 
-### ❓ Why enabling `CONFIG_STATIC_USERMODEHELPER` breaks various things in my GNU/Linux system?
+### ❓ Why does enabling `CONFIG_STATIC_USERMODEHELPER` break various things in my GNU/Linux system?
 Do I really need that feature?
 
 Linux kernel usermode helpers can be used for privilege escalation in kernel exploits
@@ -619,10 +619,10 @@ Linux kernel usermode helpers can be used for privilege escalation in kernel exp
 requires the corresponding support in the userspace: see the [example implementation][11] by
 Tycho Andersen [@tych0][12].
 
-### ❓ Why the `CONFIG_GCC_PLUGINS` option is automatically disabled during the kernel compilation?
+### ❓ Why is the `CONFIG_GCC_PLUGINS` option automatically disabled during the kernel compilation?
 
 It means that your gcc doesn't support plugins. For example, if you have `gcc-14` on Ubuntu,
-try to install `gcc-14-plugin-dev` package, it should help.
+try to install the `gcc-14-plugin-dev` package; it should help.
 
 
 [1]: https://kspp.github.io/Recommended_Settings
