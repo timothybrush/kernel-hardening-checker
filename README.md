@@ -520,16 +520,14 @@ Thanks to the [contributors][26] and users of this project!
 
 ## Questions and answers
 
-__Q:__ How all these kernel parameters influence the Linux kernel security?
+### How all these kernel parameters influence the Linux kernel security?
 
-__A:__ To answer this question, you can use the `kernel-hardening-checker` [sources of recommendations][24]
+To answer this question, you can use the `kernel-hardening-checker` [sources of recommendations][24]
 and the [Linux Kernel Defence Map][4] with its references.
 
-<br />
+### How disabling `CONFIG_USER_NS` cuts the attack surface? It's needed for containers!
 
-__Q:__ How disabling `CONFIG_USER_NS` cuts the attack surface? It's needed for containers!
-
-__A:__ Yes, the `CONFIG_USER_NS` option provides some isolation between the userspace programs,
+Yes, the `CONFIG_USER_NS` option provides some isolation between the userspace programs,
 but the tool recommends disabling it to cut the attack surface __of the kernel__.
 
 The rationale:
@@ -540,11 +538,9 @@ The rationale:
 
   - A good overview of the trade-off between having user namespaces enabled, disabled and available only for root: https://github.com/NixOS/nixpkgs/pull/84522#issuecomment-614640601
 
-<br />
+### KSPP and CLIP OS recommend `CONFIG_PANIC_ON_OOPS=y`. Why doesn't this tool do the same?
 
-__Q:__ KSPP and CLIP OS recommend `CONFIG_PANIC_ON_OOPS=y`. Why doesn't this tool do the same?
-
-__A:__ I can't support this recommendation because:
+I can't support this recommendation because:
   - It decreases system robustness (kernel oops is still not a rare situation even on production systems)
   - It allows easier denial-of-service attacks for the whole system
 
@@ -556,21 +552,17 @@ I see a good compromise, which `kernel-hardening-checker` recommends:
   - Enable the `CONFIG_BUG` kconfig option. If a kernel oops happens in the process context, the offending/attacking process is killed. In other cases, the kernel panics, which is similar to `CONFIG_PANIC_ON_OOPS=y`.
   - Set the sysctl options `kernel.oops_limit` and `kernel.warn_limit` to `100`, for example. On the one hand, this value doesn't allow easy DoS. On the other hand, it is not too large to miss the vulnerability exploitation attempts generating a lot of kernel warnings or oopses.
 
-<br />
-
-__Q:__ Why enabling `CONFIG_STATIC_USERMODEHELPER` breaks various things in my GNU/Linux system?
+### Why enabling `CONFIG_STATIC_USERMODEHELPER` breaks various things in my GNU/Linux system?
 Do I really need that feature?
 
-__A:__ Linux kernel usermode helpers can be used for privilege escalation in kernel exploits
+Linux kernel usermode helpers can be used for privilege escalation in kernel exploits
 ([example 1][9], [example 2][10]). `CONFIG_STATIC_USERMODEHELPER` prevents that method. But it
 requires the corresponding support in the userspace: see the [example implementation][11] by
 Tycho Andersen [@tych0][12].
 
-<br />
+### What about performance impact of these security hardening features?
 
-__Q:__ What about performance impact of these security hardening features?
-
-__A:__ That is not an easy question, since performance impact depends on the system workload.
+That is not an easy question, since performance impact depends on the system workload.
 A detailed evaluation of the performance impact of Linux security hardening features is
 in TODO (the issue [#66][21]). There are some interesting works in this area:
   - Ike Devolder [@BlackIkeEagle][7] made some performance tests and described the results in [this article][8].
@@ -578,25 +570,19 @@ in TODO (the issue [#66][21]). There are some interesting works in this area:
     ["Systematic Analysis of Kernel Security Performance and Energy Costs"][28] that describes
     energy and run-time overhead of the hardware vulnerability mitigations (CONFIG_CPU_MITIGATIONS).
 
-<br />
+### Does my kernel have all those mitigations of Transient Execution Vulnerabilities in my hardware?
 
-__Q:__ Does my kernel have all those mitigations of Transient Execution Vulnerabilities in my hardware?
-
-__A:__ Checking the kernel config is not enough to answer this question.
+Checking the kernel config is not enough to answer this question.
 I highly recommend using [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
 
-<br />
+### Can I easily check which kernel versions support some Kconfig option?
 
-__Q:__ Can I easily check which kernel versions support some Kconfig option?
-
-__A:__ Yes. See the [LKDDb][18] project (Linux Kernel Driver Database) by Giacomo Catenazzi [@cateee][19].
+Yes. See the [LKDDb][18] project (Linux Kernel Driver Database) by Giacomo Catenazzi [@cateee][19].
 You can use it for the `mainline` or `stable` tree from [kernel.org][20] or for your custom kernel sources.
 
-<br />
+### Why the `CONFIG_GCC_PLUGINS` option is automatically disabled during the kernel compilation?
 
-__Q:__ Why the `CONFIG_GCC_PLUGINS` option is automatically disabled during the kernel compilation?
-
-__A:__ It means that your gcc doesn't support plugins. For example, if you have `gcc-14` on Ubuntu,
+It means that your gcc doesn't support plugins. For example, if you have `gcc-14` on Ubuntu,
 try to install `gcc-14-plugin-dev` package, it should help.
 
 
