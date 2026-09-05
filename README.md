@@ -545,6 +545,45 @@ You can use it for the `mainline` or `stable` tree from [kernel.org][20] or for 
 Checking the kernel config is not enough to answer this question.
 I highly recommend using [spectre-meltdown-checker][13] tool maintained by Stéphane Lesimple [@speed47][14].
 
+### How can I disable loading of vulnerable Linux kernel modules?
+
+You can cut the attack surface of your system and protect it from many LPE exploits if you disable loading Linux kernel modules.
+
+However, it's not easy to do that without breaking the needed functionality 😉. There are several options:
+
+ 1. Compile the modules you need into the kernel and disable `CONFIG_MODULES`. That is not possible if you use a precompiled kernel from some GNU/Linux distribution.
+
+ 2. Use the `nomodule` kernel boot parameter. That is possible only if your kernel image contains all the needed functionality and you don't have to load any modules.
+
+ 3. Enable the `kernel.modules_disabled` sysctl parameter __after your system has booted and loaded all the needed kernel modules__.
+    It's a good compromise: this sysctl parameter disables loading kernel modules until the next reboot. I've prepared a systemd unit that performs this task:
+    ```shell
+    $ cat /etc/systemd/system/set-modules-disabled.service
+    [Unit]
+    Description=Disable kernel module loading after boot
+    After=network-online.target
+    Wants=network-online.target
+
+    [Service]
+    Type=oneshot
+    # Uncomment the next line if you need time for manual actions that load kernel modules
+    # ExecStartPre=/bin/sleep 300
+    ExecStart=/bin/sh -c 'echo 1 > /proc/sys/kernel/modules_disabled'
+    RemainAfterExit=yes
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+    To enable this service, run the following commands and reboot:
+    ```shell
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl enable set-modules-disabled.service
+    ```
+    If you need some time after booting for manual actions that cause loading kernel modules, then uncomment `ExecStartPre`. It's a nice hack 😊.
+
+  4. Write an empty value to the `kernel.modprobe` sysctl parameter. This is the weakest option, which only disables kernel module autoloading.
+     Moreover, writing the original value `/usr/bin/modprobe` back to this sysctl parameter re-enables this dangerous feature.
+
 ### How disabling `CONFIG_USER_NS` cuts the attack surface? It's needed for containers!
 
 Yes, the `CONFIG_USER_NS` option provides some isolation between the userspace programs,
